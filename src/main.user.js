@@ -2,12 +2,14 @@
 // @name        Enhanced hwr-berlin.de timetable/Stundenplan ⏱️📚
 // @description Focus on the current day and lightly suppress past events. Source code: https://github.com/bucherfa/enhanced-hwr-timetable
 // @namespace   https://github.com/bucherfa/enhanced-hwr-timetable
+// @homepageURL https://github.com/bucherfa/enhanced-hwr-timetable
 // @supportURL  https://github.com/bucherfa/enhanced-hwr-timetable/issues
 // @updateURL   https://github.com/bucherfa/enhanced-hwr-timetable/raw/master/src/main.user.js
+// @author      bucherfa
 // @include     https://ipool.lehre.hwr-berlin.de/data/stundenplan/*
 // @include     https://moodle.hwr-berlin.de/fb2-stundenplan/stundenplan.php
 // @license     GPL-3.0-or-later
-// @version     1
+// @version     1.0.1
 // @grant       none
 // ==/UserScript==
 
