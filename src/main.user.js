@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Enhanced hwr-berlin.de Timetable/Stundenplan ⏱️📚
-// @description Focus on the current day and lightly suppress past events. Source code: https://github.com/bucherfa/enhanced-hwr-timetable
+// @description Mobile friendly and improved desktop view. Focus on the current day, lightly suppress past events. Source code: https://github.com/bucherfa/enhanced-hwr-timetable
 // @namespace   https://github.com/bucherfa/enhanced-hwr-timetable
 // @homepageURL https://github.com/bucherfa/enhanced-hwr-timetable
 // @supportURL  https://github.com/bucherfa/enhanced-hwr-timetable/issues
@@ -9,7 +9,7 @@
 // @include     https://ipool.lehre.hwr-berlin.de/data/stundenplan/*
 // @include     https://moodle.hwr-berlin.de/fb2-stundenplan/stundenplan.php
 // @license     GPL-3.0-or-later
-// @version     1.0.2
+// @version     1.1.0
 // @grant       none
 // ==/UserScript==
 
@@ -39,10 +39,10 @@ function main() {
     element.style.backgroundColor = '#EDEDE9';
   }
   for (const element of todayColumn.purple) {
-    element.style.backgroundColor = '#E9E9ED';
+    element.style.backgroundColor = '#E9E9ED'
   }
-  if (window.location.href.includes('https://ipool.lehre.hwr-berlin.de/data/stundenplan/')) {
-    buildMobileFriendlyPage();
+  if (window.location.href.includes('https://ipool.lehre.hwr-berlin.de/data/stundenplan/informatik/')) {
+    buildMobileFriendlyPage(days);
   }
 }
 
@@ -52,9 +52,12 @@ if (courseSelector) {
   courseSelector.addEventListener('change', () => { setTimeout(main, 500) });
 }
 
-function buildMobileFriendlyPage() {
-  console.log('Hello World!');
+function buildMobileFriendlyPage(days) {
   addMobileMetaTag();
+  addMobileStyle();
+  toggleMobileView();
+  const daysElement = buildDays(days);
+  document.body.appendChild(daysElement);
 }
 
 function addMobileMetaTag() {
@@ -62,6 +65,37 @@ function addMobileMetaTag() {
   meta.name = "viewport";
   meta.content = "width=device-width, initial-scale=1";
   document.getElementsByTagName('head')[0].appendChild(meta);
+}
+
+function toggleMobileView() {
+  document.body.classList.toggle('mobile--js');
+}
+
+function buildDays(days) {
+  const root = document.createElement('div');
+  root.classList.add('custom');
+  const today = todayString();
+  for (const dayString of Object.keys(days)) {
+    const events = days[dayString];
+    if (dayString >= today && events.length > 0) {
+      const day = document.createElement('div');
+      day.classList.add('day');
+      root.appendChild(day);
+      const dateElement = document.createElement('div');
+      dateElement.innerText = new Date(dayString).toLocaleString('de-DE', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
+      dateElement.classList.add('day__date')
+      day.appendChild(dateElement);
+      const eventsElement = document.createElement('div');
+      day.appendChild(eventsElement);
+      for (const event of events) {
+        const eventElement = document.createElement('div');
+        eventElement.innerText = event.innerHTML.split('<br>').join(' ⋅ ').replace('<span style="color:#0000ff">', '').replace('</span>', '');
+        eventElement.classList.add('day__event');
+        eventsElement.appendChild(eventElement);
+      }
+    }
+  }
+  return root;
 }
 
 function todayColumnElements() {
@@ -128,8 +162,15 @@ function parseEvents() {
     }
     const EventElements = weekTable.querySelectorAll('.v');
     for (const eventElement of EventElements) {
-      const eventElementOffset = Math.round(eventElement.getBoundingClientRect().x) - 5;
-      days[weekDayElementOffsets[eventElementOffset]].push(eventElement);
+      const eventElementOffset = Math.round(eventElement.getBoundingClientRect().x);
+      let dateString;
+      for (let i = 0; i<6; i++) {
+        dateString = weekDayElementOffsets[eventElementOffset - i];
+        if (dateString) {
+          break;
+        }
+      }
+      days[dateString].push(eventElement);
     }
   }
   return days;
@@ -148,6 +189,54 @@ function parseDate(text) {
 
 function todayString() {
   return new Date().toISOString().split('T')[0];
+}
+
+function addMobileStyle () {
+  const newNode = document.createElement('style');
+  newNode.textContent = `
+.custom {
+  display: none;
+}
+
+.day {
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  margin: 0.5rem 0;
+}
+.day__date {
+  padding: 0.5rem;
+  background-color: #5B8C5A;
+  border-radius: 0.25rem 0.25rem 0 0;
+  color: white;
+}
+.day__event {
+  padding: 0.5rem;
+  border-bottom: 1px solid #D4D8D4;
+}
+
+.day__event:last-child {
+  border-bottom: 0;
+}
+
+@media only screen and (max-width: 716px) {
+  .mobile--js > table,
+  .mobile--js > .w1,
+  .mobile--js > .w2,
+  .mobile--js > .fz,
+  .mobile--js > .fzl {
+    display: none;
+  }
+  .mobile--js > .w1:first-child {
+    display: block;
+    margin: 0.5rem;
+  }
+  .mobile--js > .custom {
+    display: block;
+  }
+}
+    `;
+  const target = document.getElementsByTagName('head')[0] || document.body || document.documentElement;
+  target.appendChild(newNode);
 }
 
 main();
