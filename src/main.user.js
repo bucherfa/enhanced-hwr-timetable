@@ -83,7 +83,7 @@ function buildDays(days) {
       root.appendChild(day);
       const dateElement = document.createElement('div');
       dateElement.innerText = new Date(dayString).toLocaleString('de-DE', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
-      dateElement.classList.add('day__date')
+      dateElement.classList.add('day__date');
       day.appendChild(dateElement);
       const eventsElement = document.createElement('div');
       day.appendChild(eventsElement);
