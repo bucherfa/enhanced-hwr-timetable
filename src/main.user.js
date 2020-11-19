@@ -9,7 +9,7 @@
 // @include     https://ipool.lehre.hwr-berlin.de/data/stundenplan/*
 // @include     https://moodle.hwr-berlin.de/fb2-stundenplan/stundenplan.php
 // @license     GPL-3.0-or-later
-// @version     1.1.0
+// @version     1.1.2
 // @grant       none
 // ==/UserScript==
 
