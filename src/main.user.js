@@ -13,7 +13,7 @@
 // @grant       none
 // ==/UserScript==
 
-const monthAbbreviation = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+const monthAbbreviation = ['Jan', 'Feb', 'Mrz', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
 
 function main() {
   const days = parseEvents();
@@ -160,11 +160,11 @@ function parseEvents() {
       weekDayElementOffsets[weekDayElementOffset] = parsedWeekDayText;
       days[parsedWeekDayText] = [];
     }
-    const EventElements = weekTable.querySelectorAll('.v');
-    for (const eventElement of EventElements) {
+    const eventElements = weekTable.querySelectorAll('.v');
+    for (const eventElement of eventElements) {
       const eventElementOffset = Math.round(eventElement.getBoundingClientRect().x);
       let dateString;
-      for (let i = 0; i<6; i++) {
+      for (let i = 0; i<200; i++) {
         dateString = weekDayElementOffsets[eventElementOffset - i];
         if (dateString) {
           break;
@@ -196,6 +196,7 @@ function addMobileStyle () {
   newNode.textContent = `
 .custom {
   display: none;
+  font-family: Arial,Helvetica,sans-serif;
 }
 
 .day {
@@ -218,7 +219,7 @@ function addMobileStyle () {
   border-bottom: 0;
 }
 
-@media only screen and (max-width: 716px) {
+@media only screen and (max-width: 767px) {
   .mobile--js > table,
   .mobile--js > .w1,
   .mobile--js > .w2,
