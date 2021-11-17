@@ -10,3 +10,4 @@ A user script to use with [Tampermonkey](https://www.tampermonkey.net/) or [Grea
 * Improved desktop view
 * Focus on current day
 * Lightly suppress past events
+* Slightly hide events that contain given strings (define an array with strings in the localStorage with the key `ENHANCED_TIMETABLE_IGNORED`)

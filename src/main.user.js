@@ -9,15 +9,17 @@
 // @include     https://ipool.lehre.hwr-berlin.de/data/stundenplan/*
 // @include     https://moodle.hwr-berlin.de/fb2-stundenplan/stundenplan.php
 // @license     GPL-3.0-or-later
-// @version     1.1.2
+// @version     1.1.3
 // @grant       none
 // ==/UserScript==
 
 const monthAbbreviation = ['Jan', 'Feb', 'Mrz', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+const STORAGE_KEY_IGNORED = 'ENHANCED_TIMETABLE_IGNORED';
 
 function main() {
   const days = parseEvents();
   const today = todayString();
+  const ignoredStrings = getIgnoredStrings();
   for (const key of Object.keys(days)) {
     if (key < today) {
       for (const event of days[key]) {
@@ -33,6 +35,14 @@ function main() {
         //event.style.borderWidth = '0';
       }
     }*/
+    for (const event of days[key]) {
+      for (const string of ignoredStrings) {
+        if (event.textContent.includes(string)) {
+          event.style.borderWidth = '0';
+          event.style.opacity = '20%';
+        }
+      }
+    }
   }
   const todayColumn = todayColumnElements();
   for (const element of todayColumn.greenish) {
@@ -238,6 +248,14 @@ function addMobileStyle () {
     `;
   const target = document.getElementsByTagName('head')[0] || document.body || document.documentElement;
   target.appendChild(newNode);
+}
+
+function getIgnoredStrings() {
+  const ignoredStringsString = localStorage.getItem(STORAGE_KEY_IGNORED);
+  if (ignoredStringsString) {
+    return JSON.parse(ignoredStringsString);
+  }
+  return [];
 }
 
 main();
